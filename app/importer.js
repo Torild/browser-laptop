@@ -234,9 +234,17 @@ importer.on('add-cookies', (e, cookies) => {
       httpOnly: cookies[i].httponly,
       expirationDate: cookies[i].expiry_date
     }
+    // Bypassing cookie mistach error in
+    // https://github.com/brave/browser-laptop/issues/11401
+    if (cookie.domain === '.google.com' &&
+        (cookie.url === 'https://notifications.google.com' ||
+         cookie.url === 'https://accounts.google.com')) {
+      continue
+    }
     session.defaultSession.cookies.set(cookie, (error) => {
       if (error) {
         console.error(error)
+        console.error(cookie)
       }
     })
   }
